@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Player Statistics</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --blue: #58a6ff;
+    --accent: #ffa657;
+    --shadow: rgba(0, 0, 0, 0.35);
+  }
+  body {
+    margin: 0;
+    background: linear-gradient(145deg, #0d1117, #0b0f14);
+    font-family: "Poppins", sans-serif;
+    color: var(--text);
+  }
+  .container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 25px;
+    background: rgba(22, 27, 34, 0.8);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 30px var(--shadow);
+  }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--blue);
+    margin-bottom: 25px;
+    text-shadow: 0 0 10px #58a6ff55;
+  }
+  .search-box {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--card);
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    position: relative;
+  }
+  select, input {
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  button {
+    border: none;
+    background-color: var(--blue);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  button:hover {
+    background-color: #1f6feb;
+    transform: translateY(-2px);
+  }
+  .suggestions {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    background: var(--card);
+    border-radius: 8px;
+    box-shadow: 0 0 10px #00000055;
+    z-index: 10;
+  }
+  .suggestions div {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #30363d;
+  }
+  .suggestions div:hover {
+    background: #1f6feb33;
+  }
+  .result {
+    background-color: var(--card);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+  }
+  .player-info p {
+    margin: 6px 0;
+    font-size: 15px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background-color: var(--card);
+    border-radius: 14px;
+    padding: 15px 18px;
+    box-shadow: 0 0 15px #00000033;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0 20px #00000055;
+  }
+  .card h2 {
+    color: var(--blue);
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 8px;
+  }
+  .list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .list li {
+    border-bottom: 1px solid #30363d;
+    padding: 5px 0;
+    font-size: 14px;
+  }
+  .list li b {
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>📊 PLAYER STATISTICS</h1>
+
+  <div class="search-box">
+    <select id="searchType">
+      <option value="nickname">Nickname</option>
+      <option value="steam_id">Steam ID</option>
+    </select>
+    <input id="searchInput" placeholder="Enter a nickname or Steam ID…" oninput="showSuggestions()" />
+    <button onclick="searchPlayer()">Search</button>
+    <div id="suggestions" class="suggestions"></div>
+  </div>
+
+  <div id="playerResult" class="result"></div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>🕒 Top Playtime</h2>
+      <ul id="topPlaytime" class="list"></ul>
+    </div>
+    <div class="card">
+      <h2>🔫 Top Kills</h2>
+      <ul id="topKills" class="list"></ul>
+    </div>
+    <div class="card">
+      <h2>💀 Top Deaths</h2>
+      <ul id="topDeaths" class="list"></ul>
+    </div>
+    <div class="card">
+      <h2>⚖️ Top KDR</h2>
+      <ul id="topKdr" class="list"></ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = "YOUR_SUPABASE_URL_HERE";
+const SUPABASE_KEY = "YOUR_SUPABASE_KEY_HERE";
+
+function formatPlaytime(seconds) {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  return `${h}h ${m}m ${s}s`;
+}
+
+async function fetchTopStats() {
+  const headers = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY };
+
+  const playtime = await fetch(`${SUPABASE_URL}/rest/v1/player_stats?select=nickname,total_play_seconds&order=total_play_seconds.desc&limit=5`, { headers }).then(r => r.json());
+  const kills = await fetch(`${SUPABASE_URL}/rest/v1/player_stats?select=nickname,kills&order=kills.desc&limit=5`, { headers }).then(r => r.json());
+  const deaths = await fetch(`${SUPABASE_URL}/rest/v1/player_stats?select=nickname,deaths&order=deaths.desc&limit=5`, { headers }).then(r => r.json());
+  const kdr = await fetch(`${SUPABASE_URL}/rest/v1/player_stats?select=nickname,kills,deaths`, { headers }).then(r => r.json());
+
+  document.getElementById("topPlaytime").innerHTML = playtime.map(p => `<li><b>${p.nickname}</b> - ${formatPlaytime(p.total_play_seconds)}</li>`).join("");
+  document.getElementById("topKills").innerHTML = kills.map(p => `<li><b>${p.nickname}</b> - ${p.kills}</li>`).join("");
+  document.getElementById("topDeaths").innerHTML = deaths.map(p => `<li><b>${p.nickname}</b> - ${p.deaths}</li>`).join("");
+  document.getElementById("topKdr").innerHTML = kdr
+    .map(p => {
+      const ratio = p.deaths === 0 ? p.kills : (p.kills / p.deaths).toFixed(2);
+      return `<li><b>${p.nickname}</b> - KDR: ${ratio}</li>`;
+    })
+    .sort((a, b) => parseFloat(b.match(/[\d.]+/)) - parseFloat(a.match(/[\d.]+/)))
+    .slice(0, 5)
+    .join("");
+}
+
+async function searchPlayer() {
+  const type = document.getElementById("searchType").value;
+  const input = document.getElementById("searchInput").value.trim();
+  if (!input) return;
+
+  const headers = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY };
+  const url = `${SUPABASE_URL}/rest/v1/player_stats?${type}=ilike.%25${encodeURIComponent(input)}%25&select=*`;
+  const data = await fetch(url, { headers }).then(r => r.json());
+
+  if (data.length === 0) {
+    document.getElementById("playerResult").innerHTML = "<p>No player found.</p>";
+    return;
+  }
+
+  if (data.length > 1) {
+    const suggestionsBox = document.getElementById("suggestions");
+    suggestionsBox.innerHTML = "<div><b>Did you mean:</b></div>" +
+      data.map(p => `<div onclick="showPlayer('${p.steam_id}')">${p.nickname}</div>`).join("");
+    return;
+  }
+
+  showPlayer(data[0].steam_id);
+}
+
+async function showPlayer(steamId) {
+  const headers = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY };
+  const url = `${SUPABASE_URL}/rest/v1/player_stats?steam_id=eq.${encodeURIComponent(steamId)}&select=*`;
+  const data = await fetch(url, { headers }).then(r => r.json());
+
+  if (data.length === 0) {
+    document.getElementById("playerResult").innerHTML = "<p>No player found.</p>";
+    return;
+  }
+
+  const p = data[0];
+  const kdr = p.deaths === 0 ? p.kills : (p.kills / p.deaths).toFixed(2);
+
+  document.getElementById("playerResult").innerHTML = `
+    <div class="player-info">
+      <p><b>Nickname:</b> ${p.nickname}</p>
+      <p><b>Steam ID:</b> ${p.steam_id}</p>
+      <p><b>Kills:</b> ${p.kills}</p>
+      <p><b>Deaths:</b> ${p.deaths}</p>
+      <p><b>KDR:</b> ${kdr}</p>
+      <p><b>Playtime:</b> ${formatPlaytime(p.total_play_seconds)}</p>
+      <p><b>Last Seen:</b> ${new Date(p.last_seen_utc).toLocaleString()}</p>
+    </div>
+  `;
+
+  document.getElementById("suggestions").innerHTML = "";
+}
+
+async function showSuggestions() {
+  const input = document.getElementById("searchInput").value.trim();
+  if (!input) {
+    document.getElementById("suggestions").innerHTML = "";
+    return;
+  }
+
+  const headers = { "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY };
+  const url = `${SUPABASE_URL}/rest/v1/player_stats?nickname=ilike.%25${encodeURIComponent(input)}%25&select=steam_id,nickname&limit=5`;
+  const data = await fetch(url, { headers }).then(r => r.json());
+
+  if (data.length === 0) {
+    document.getElementById("suggestions").innerHTML = "";
+    return;
+  }
+
+  document.getElementById("suggestions").innerHTML =
+    data.map(p => `<div onclick="showPlayer('${p.steam_id}')">${p.nickname}</div>`).join("");
+}
+
+fetchTopStats();
+</script>
+</body>
+</html>
