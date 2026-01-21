@@ -208,9 +208,6 @@ https://choosealicense.com/licenses/mit/
 <p align="center">
 <h2 align="center">🌐 More about me</h2>
 <p align="center">
-<a href="https://www.youtube.com/c/konoarus"><img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white"/></a>
-<a href="https://discord.gg/nHGRXZujvW"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"/></a>
-<a href="https://www.twitch.tv/konoaru"><img src="https://img.shields.io/badge/Twitch-9146FF?style=for-the-badge&logo=twitch&logoColor=white"/></a>
 <a href="https://konoara.netlify.app"><img src="https://img.shields.io/badge/Portfolio-000000?style=for-the-badge&logo=vercel&logoColor=white"/></a>
 </p>
 </p>
