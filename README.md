@@ -59,6 +59,11 @@ It can be used anywhere Subabase is available websites, dashboards, external too
     <td>Example Website Included</td>
     <td>An example HTML file (<b>ExempleOfUseOnWebsite.html</b>) shows how to display stats on your own site.</td>
   </tr>
+
+  <tr>
+    <td>Example Discord Bit Included</td>
+    <td>An example PY file (<b>ExempleOfUseOnADiscordBot.py</b>).</td>
+  </tr>
 </table>
 
 ---
