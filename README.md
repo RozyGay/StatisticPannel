@@ -169,20 +169,24 @@ StatisticPannel can be used **anywhere Subabase works**, including:
 
 An example file is included into the REPO:
 
+For use into a website u can use : 
 ```
 ExempleOfUseOnWebsite.html
 ```
 
-This file shows how to:
-
-- Fetch player stats  
-- Display top playtime, kills, deaths, KDR  
-- Search players  
-- Build a full statistics dashboard  
+This one make a StatisticPannels for your website
 
 ### Want to see a live example?
 
 👉 https://sites.google.com/view/speed-dark-rp/statistique-joueur?authuser=0
+
+For use into a discord bot u can use : 
+```
+ExempleOfUseOnADiscordBot.py
+```
+
+This one add a Command like /track_player (player_name) to see stats of the player
+And a lot of more command !!!
 
 ---
 
