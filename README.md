@@ -14,7 +14,7 @@
 
 <p align="center" style="color: #888; font-size: 18px;">
 StatisticPannel is an EXILED plugin that tracks player statistics (playtime, kills, deaths, KDR, last seen) and automatically syncs them to Subabase (Supabase).  
-It can be used anywhere Subabase is available — websites, dashboards, external tools, and more.
+It can be used anywhere Subabase is available websites, dashboards, external tools, and more.
 </p>
 
 <hr>
