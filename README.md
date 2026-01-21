@@ -135,7 +135,7 @@ Run the query.
 
 # ⚙️ Configuration File
 
-Your config will look like this:
+Your EXILED config will look like this:
 
 ```yaml
 is_enabled: true
@@ -164,9 +164,10 @@ StatisticPannel can be used **anywhere Subabase works**, including:
 - Custom HTML websites  
 - GitHub Pages  
 - Vercel / Netlify  
-- Any JavaScript environment  
+- Any JavaScript environment
+- And MORE (like python) 
 
-An example file is included:
+An example file is included into the REPO:
 
 ```
 ExempleOfUseOnWebsite.html
