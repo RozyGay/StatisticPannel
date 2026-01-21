@@ -203,11 +203,3 @@ https://choosealicense.com/licenses/mit/
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&height=140&section=footer" />
 </p>
-
-
-- a **badge section for Subabase compatibility**  
-- a **feature roadmap**  
-- a **screenshots section**  
-- a **FAQ section**  
-
-Just tell me and I’ll expand the README.
